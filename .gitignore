@@ -1,0 +1,9 @@
+*.hex        # Compiled output
+*.elf
+*.bin
+*.o          # Object files
+*.d
+*.map
+build/       # Arduino build folder
+__pycache__/ # Python cache (if you test with Python)
+.DS_Store    # macOS hidden file
