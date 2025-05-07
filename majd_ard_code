@@ -1,0 +1,47 @@
+const int triggerPin = 9;       // Output pin for the 50 Hz clock signal
+const int frequency = 50;       // Frequency in Hz
+const int pulseDuration = 50;   // Pulse width in microseconds
+const int pulseInterval = 20000; // Total period in microseconds (1/50 Hz = 20 ms)
+const int maxPulses = 1000;     // Total number of pulses (frames)
+bool startClock = false;        // Flag to start the clock
+int pulseCount = 0;             // Counter for number of pulses sent
+char serialbuff;
+
+void setup() {
+    pinMode(triggerPin, OUTPUT);
+    Serial.begin(9600);
+    while (!Serial) { }  // Wait for Serial connection
+    Serial.println("Arduino Ready");
+}
+
+void loop() {
+    // Wait for Bonsai to send the "Start" signal
+    if (Serial.available() > 0 && !startClock) {
+        serialbuff = Serial.read();
+        if (serialbuff == 'S') {
+            startClock = true;
+            Serial.println("Clock Started");
+        }
+    }
+
+    // Generate 50 Hz signal, stop after 1000 pulses
+    if (startClock ) {
+        digitalWrite(triggerPin, HIGH);
+        delayMicroseconds(pulseDuration);
+        digitalWrite(triggerPin, LOW);
+        delayMicroseconds(pulseInterval - pulseDuration);
+        //pulseCount++;
+
+        // // Optional: report progress every 100 pulses
+        // if (pulseCount % 100 == 0) {
+        //     Serial.print("Pulse Count: ");
+        //     Serial.println(pulseCount);
+        // }
+
+        // // Stop after reaching the target
+        // if (pulseCount >= maxPulses) {
+        //     Serial.println("Finished 1000 Pulses.");
+        //     startClock = false;
+        // }
+    }
+}
