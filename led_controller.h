@@ -12,6 +12,14 @@
 extern CRGB leds_arr[NUM_COLS][LEDS_PER_STRIP];
 extern const int dataPins[NUM_COLS];
 
+// Declare the color variables 
+extern CRGB SUNLIGHT_NEUTRAL;
+extern CRGB SUNLIGHT_MIDDAY;
+extern CRGB SUNLIGHT_WARM;
+
+
+
+
 // -------- Function Declarations --------
 
 // LED grid control
@@ -31,5 +39,7 @@ void doubleFinTailEffect(CRGB baseColor, int waveAmplitude, float waveSpeed, int
 void handleSerialCommand(String input);
 CRGB getColorFromName(String name);
 int getCommandCode(String cmd);
+
+
 
 #endif
