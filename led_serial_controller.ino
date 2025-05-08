@@ -1,5 +1,6 @@
 #include "led_controller.h"  // brings in all LED and serial logic
 
+bool commandReceived = false;
 
 void setup() {
   Serial.begin(9600);
@@ -23,55 +24,76 @@ void setup() {
 }
 
 void loop() {
-  // Fade to neutral sunlight
-  fadeAllToColor(CRGB(255, 244, 229), 30, 40); // NEUTRAL
-  delay(1000);
   if (Serial.available()) {
     String command = Serial.readStringUntil('\n');
-    command.trim(); // removes \r or space
-    if (command.startsWith("expandEllipse")) {
-      int firstComma = command.indexOf(',');
-      int secondComma = command.indexOf(',', firstComma + 1);
-
-      if (firstComma != -1 && secondComma != -1) {
-        int x = command.substring(firstComma + 1, secondComma).toInt();
-        int y = command.substring(secondComma + 1).toInt();
-      expandEllipse(y, x, CRGB::Black, 5, 30, 50); // y=row, x=col
-      }
-    }  
+    command.trim();
+    handleSerialCommand(command);
+    commandReceived = true;
   }
-  FastLED.show(); // or wherever your LED update goes
+
+  if (!commandReceived) {
+    fadeAllToColor(SUNLIGHT_NEUTRAL, 50, 10); // only fade if nothing else happened
+  }
+
+  commandReceived = false; // reset for next loop
 }
 
 
-  // // Expand black circle in the middle
-  // expandCircle(59, 6, CRGB::Black, 5, 10);
-  // delay(1000);
+//   if (Serial.available()) {
+//     String command = Serial.readStringUntil('\n');
+//     command.trim(); // removes \r or space
 
-  // // Fade to midday sunlight
-  // fadeAllToColor(CRGB(255, 250, 240), 30, 40); // MIDDAY
-  // delay(1000);
+//     if (command.startsWith("expandEllipse")) {
+//       int firstComma = command.indexOf(',');
+//       int secondComma = command.indexOf(',', firstComma + 1);
 
-  // // Expand ellipse from left side
-  // expandEllipse(20, 5, CRGB::Black, 6, 10, 25);
-  // delay(1000);
+//       if (firstComma != -1 && secondComma != -1) {
+//         int x = command.substring(firstComma + 1, secondComma).toInt();
+//         int y = command.substring(secondComma + 1).toInt();
 
-//   fishTailEffect(CRGB::White, 12, 10.0, 4);  // Color, amplitude, speed, cycles
-//   delay(1000);
+//         Serial.print("Received command: expandEllipse with x=");
+//         Serial.print(x);
+//         Serial.print(", y=");
+//         Serial.println(y);
 
-
-//   // doubleFinTailEffect(CRGB::Cyan, 10, 10.0, 3);
-//   // delay(1000);
-
-//   // Light a single pixel and its neighbors
-//   lightPixelWithNeighbors(50, 6, CRGB::Red);
-//   delay(1000);
-
-//   // Progressive column fill
-//   progressiveColumnLighting(100, CRGB::Blue);\
-//   delay(1000);
-
-//   // Light columns one by one
-//   lightUpColumnsOneByOne(200, CRGB::Green);
-//   delay(1000);
+//         expandEllipse(y, x, CRGB::Black, 5, 10, 0); // y=row, x=col
+//         FastLED.show();
+//       }
+//     }
+//   }
 // }
+
+
+// void loop() {
+//   // Fade to neutral sunlight
+//   fadeAllToColor(CRGB(255, 244, 229), 30, 40); // NEUTRAL
+//   delay(1000);
+
+//   // expandEllipse(65, 5, CRGB::Blue, 5, 10, 0);  // row=65, col=5 //cols=12 //rows=118 //expandEllipse(int centerRow, int centerCol, CRGB color, int radiusX, int radiusY, int delayMs)
+//   // FastLED.show();  // Ensure the LEDs are updated
+
+//   if (Serial.available()) {
+//     String command = Serial.readStringUntil('\n');
+//     command.trim(); // removes \r or space
+
+//     if (command.startsWith("expandEllipse")) {
+//       int firstComma = command.indexOf(',');
+//       int secondComma = command.indexOf(',', firstComma + 1);
+
+//       if (firstComma != -1 && secondComma != -1) {
+//         int x = command.substring(firstComma + 1, secondComma).toInt();
+//         int y = command.substring(secondComma + 1).toInt();
+
+//         Serial.print("Parsed coords: x=");
+//         Serial.print(x);
+//         Serial.print(", y=");
+//         Serial.println(y);
+
+//         expandEllipse(y, x, CRGB::Blue, 5, 10, 0); // y=row, x=col
+//         FastLED.show();  // Only needed if expandEllipse doesn't call it internally
+//       }
+//     }
+//   }
+//   FastLED.show(); // or wherever your LED update goes
+// }
+
