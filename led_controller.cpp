@@ -4,6 +4,18 @@
 CRGB leds_arr[NUM_COLS][LEDS_PER_STRIP];
 const int dataPins[NUM_COLS] = DATA_PINS;
 
+//Defined COLORS
+// Neutral white (morning/evening light)
+CRGB SUNLIGHT_NEUTRAL = CRGB(255, 244, 229);
+
+
+// Midday white (cooler, stronger daylight)
+CRGB SUNLIGHT_MIDDAY = CRGB(255, 255, 255);
+
+// Warm white (sunset-like)
+CRGB SUNLIGHT_WARM = CRGB(255, 220, 180);
+
+
 // ---------- Named Color Lookup Table ----------
 struct NamedColor {
   const char* name;
@@ -53,12 +65,9 @@ int getCommandCode(String cmd) {
   if (cmd == "lightPixelNeighbors") return 4;
   if (cmd == "fadeAllToColor") return 5;
   if (cmd == "setBrightness") return 6;
+  if (cmd == "doubleFinTailEffect") return 7;
   return 0;
 } // getCommandCode
-
-/**
- * Parses a serial command and executes the matching LED effect function.
- */
 void handleSerialCommand(String input) {
   input.trim();
   if (input.length() == 0) return;
@@ -131,10 +140,39 @@ void handleSerialCommand(String input) {
       break;
     }
 
+    case 7: {  // doubleFinTailEffect
+      int p1 = params.indexOf(',');
+      int p2 = params.indexOf(',', p1 + 1);
+      int p3 = params.indexOf(',', p2 + 1);
+      int p4 = params.indexOf(',', p3 + 1);
+      int p5 = params.indexOf(',', p4 + 1);
+
+      // Format: doubleFinTailEffect,r,g,b,amplitude,speed[,cycles]
+      if (p1 != -1 && p2 != -1 && p3 != -1 && p4 != -1) {
+        int r = params.substring(0, p1).toInt();
+        int g = params.substring(p1 + 1, p2).toInt();
+        int b = params.substring(p2 + 1, p3).toInt();
+        int amp = params.substring(p3 + 1, p4).toInt();
+        float speed;
+        int cycles = 2; // default
+
+        if (p5 != -1) {
+          speed = params.substring(p4 + 1, p5).toFloat();
+          cycles = params.substring(p5 + 1).toInt();
+        } else {
+          speed = params.substring(p4 + 1).toFloat();
+        }
+
+        doubleFinTailEffect(CRGB(r, g, b), amp, speed, cycles);
+      }
+      break;
+    }
+
     default:
       break;
   }
-} // handleSerialCommand
+}
+
 
 /**
  * Lights a specific pixel on the grid.
@@ -303,5 +341,4 @@ void doubleFinTailEffect(CRGB baseColor, int waveAmplitude, float waveSpeed, int
     phase += waveSpeed * DEG_TO_RAD;
   }
 } // doubleFinTailEffect
-
 
