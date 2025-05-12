@@ -1,4 +1,9 @@
 #include "led_controller.h" // Includes NUM_COLS, NUM_ROWS, DATA_PINS, etc.
+/**
+ * DEFAULT_RESET is a macro that restores the LED grid to a soft white background 
+ * (SUNLIGHT_NEUTRAL) after visual effects. It provides a fast and smooth fade transition
+ */
+#define DEFAULT_RESET() fadeAllToColor(SUNLIGHT_NEUTRAL, 15, 10)
 
 // --- LED Matrix Configuration ---
 
@@ -210,6 +215,8 @@ void expandCircle(int centerRow, int centerCol, CRGB color, int maxRadius, int d
     FastLED.show();
     delay(delayMs);
   }
+  // After completing the visual effect, smoothly reset the entire LED grid
+  DEFAULT_RESET();
 } // expandCircle
 
 /**
@@ -232,6 +239,8 @@ void expandEllipse(int centerRow, int centerCol, CRGB color, int radiusX, int ra
     FastLED.show();
     delay(delayMs);
   }
+  // After completing the visual effect, smoothly reset the entire LED grid
+  DEFAULT_RESET();
 } // expandEllipse
 
 
@@ -343,4 +352,6 @@ void doubleFinTailEffect(CRGB baseColor, int waveAmplitude, float waveSpeed, int
     delay(30);
     phase += waveSpeed * DEG_TO_RAD;
   }
+  // After completing the visual effect, smoothly reset the entire LED grid
+  DEFAULT_RESET();
 } // doubleFinTailEffect
