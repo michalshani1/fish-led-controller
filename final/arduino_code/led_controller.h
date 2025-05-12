@@ -15,9 +15,6 @@
 // Data pins used for each column (must match physical wiring)
 #define DATA_PINS {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}
 
-// Macro for resetting the LED grid to soft white background after effects
-#define DEFAULT_RESET() fadeAllToColor(SUNLIGHT_NEUTRAL, 15, 10)
-
 // Global LED matrix: [column][row]
 extern CRGB leds_arr[NUM_COLS][LEDS_PER_STRIP];
 extern const int dataPins[NUM_COLS];
